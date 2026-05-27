@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Writer</title>
+    <style>
+        body { background: #f0f0f0; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 10px; margin: 0; }
+        
+        /* Top Header */
+        #header { width: 100%; max-width: 1050px; display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 5px; font-weight: bold; }
+        #header span { cursor: pointer; color: #2c3e50; }
+
+        /* Toolbar */
+        #toolbar { 
+            background: #2c3e50; padding: 8px; display: flex; flex-wrap: wrap; gap: 5px; 
+            justify-content: center; 
+            border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 1050px; box-sizing: border-box;
+        }
+        .tool-group { display: flex; gap: 4px; border-right: 1px solid #7f8c8d; padding-right: 5px; }
+        
+        button, select, .color-picker-label { 
+            height: 35px; padding: 0 8px; cursor: pointer; border: none; 
+            border-radius: 4px; background: #ecf0f1; font-weight: bold; font-size: 12px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        
+        .color-picker-label { width: 35px; padding: 0; position: relative; }
+        .color-picker-label input { position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+        .color-circle { width: 18px; height: 18px; border-radius: 50%; border: 1px solid #000; }
+
+        #editor { 
+            width: 100%; max-width: 1050px; min-height: 500px; background: white; 
+            margin-top: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            outline: none; font-size: 11pt; box-sizing: border-box;
+        }
+
+        @media (max-width: 600px) {
+            #toolbar { justify-content: center; }
+            .tool-group { border-right: none; }
+        }
+        
+        @media print {
+            #header, #toolbar, .disclaimer { display: none; }
+            #editor { box-shadow: none; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="header">
+    <span onclick="clearEditor()">Clear</span> | 
+    <span onclick="saveOptions()">Save</span> | 
+    <span onclick="document.getElementById('filePicker').click()">Load</span>
+    <input type="file" id="filePicker" style="display:none" onchange="loadHTML(event)">
+</div>
+
+<div id="toolbar">
+    <div class="tool-group">
+        <select onchange="format('fontName', this.value)" style="width: 140px;">
+            <optgroup label="Common">
+                <option value="Arial">Arial</option><option value="Arial Black">Arial Black</option>
+                <option value="Courier New">Courier New</option><option value="Georgia">Georgia</option>
+                <option value="Helvetica">Helvetica</option><option value="Impact">Impact</option>
+                <option value="Lucida Console">Lucida Console</option><option value="Palatino">Palatino</option>
+                <option value="Tahoma">Tahoma</option><option value="Times New Roman">Times New Roman</option>
+                <option value="Trebuchet MS">Trebuchet MS</option><option value="Verdana">Verdana</option>
+                <option value="Comic Sans MS">Comic Sans MS</option><option value="Garamond">Garamond</option>
+                <option value="Bookman">Bookman</option><option value="Candara">Candara</option>
+                <option value="Geneva">Geneva</option><option value="Segoe UI">Segoe UI</option>
+                <option value="Calibri">Calibri</option><option value="Cambria">Cambria</option>
+            </optgroup>
+            <optgroup label="Chinese">
+                <option value="SimSun">宋体</option><option value="NSimSun">新宋体</option>
+                <option value="SimHei">黑体</option><option value="Microsoft YaHei">微软雅黑</option>
+                <option value="Microsoft JhengHei">微軟正黑體</option><option value="KaiTi">楷体</option>
+                <option value="FangSong">仿宋</option><option value="LiSu">隶书</option>
+                <option value="YouYuan">幼圆</option><option value="STHeiti">华文黑体</option>
+                <option value="STSong">华文宋体</option><option value="STKaiti">华文楷体</option>
+                <option value="STFangsong">华文仿宋</option><option value="Hiragino Sans GB">冬青黑体</option>
+                <option value="PMingLiU">新细明体</option><option value="MingLiU">细明体</option>
+                <option value="DFKai-SB">标楷体</option><option value="SimKaiti">华文楷体</option>
+                <option value="FZSongti">方正宋体</option><option value="FZHeiti">方正黑体</option>
+            </optgroup>
+        </select>
+        <select onchange="format('fontSize', this.value)" style="width: 60px;">
+            <option value="1">7</option><option value="1">8</option><option value="1">9</option>
+            <option value="2">10</option><option value="3" selected>11</option>
+            <option value="3">12</option><option value="3">13</option><option value="4">14</option>
+            <option value="4">15</option><option value="4">16</option><option value="4">17</option>
+            <option value="5">18</option><option value="5">19</option><option value="5">20</option>
+            <option value="5">21</option><option value="5">22</option><option value="5">23</option>
+            <option value="6">24</option><option value="6">25</option><option value="6">26</option>
+            <option value="6">27</option><option value="6">28</option><option value="6">29</option>
+            <option value="6">30</option><option value="7">31</option><option value="7">32</option>
+            <option value="7">33</option><option value="7">34</option><option value="7">35</option>
+            <option value="7">36</option>
+        </select>
+    </div>
+    
+    <div class="tool-group">
+        <button onclick="format('undo')">↶</button>
+        <button onclick="format('redo')">↷</button>
+        <button onclick="format('bold')">B</button>
+        <button onclick="format('italic')">I</button>
+        <button onclick="format('underline')">U</button>
+        <button onclick="format('strikeThrough')">S</button>
+    </div>
+
+    <div class="tool-group">
+        <label class="color-picker-label" title="Text Color">
+            <input type="color" oninput="format('foreColor', this.value)">
+            <div class="color-circle" style="background: #000;"></div>
+        </label>
+        <label class="color-picker-label" title="Fill Color">
+            <input type="color" oninput="format('hiliteColor', this.value)">
+            <div class="color-circle" style="background: #ffff00;"></div>
+        </label>
+    </div>
+
+    <div class="tool-group">
+        <button onclick="format('indent')">➔</button>
+        <button onclick="format('outdent')">➔↺</button>
+        <button onclick="format('insertHorizontalRule')">HR</button>
+        <button onclick="format('subscript')">x₁</button>
+        <button onclick="format('superscript')">x²</button>
+        <button onclick="insertLink()">Link</button>
+        <button onclick="insertImg()">Img</button>
+    </div>
+
+    <div class="tool-group">
+        <button onclick="format('justifyLeft')">Left</button>
+        <button onclick="format('justifyCenter')">Center</button>
+        <button onclick="format('justifyRight')">Right</button>
+        <button onclick="format('justifyFull')">Justify</button>
+    </div>
+</div>
+
+<div class="disclaimer" style="width: 100%; max-width: 1050px; text-align: center; font-size: 12px; color: #666; margin-top: 10px; padding: 0 20px; box-sizing: border-box;">
+    <em>Note: This editor runs entirely in your browser. Data is saved temporarily in your session—please click <strong>Save</strong> to download your work before closing the tab.</em>
+</div>
+
+<div id="editor" contenteditable="true"></div>
+
+<script>
+    const editor = document.getElementById('editor');
+    
+    editor.addEventListener('input', () => sessionStorage.setItem('rich_content', editor.innerHTML));
+    window.onload = () => {
+        editor.innerHTML = sessionStorage.getItem('rich_content') || '';
+        editor.style.fontSize = "11pt";
+    };
+
+    function format(cmd, val = null) {
+        editor.focus();
+        document.execCommand(cmd, false, val);
+    }
+
+    function clearEditor() {
+        if(confirm('Are you sure you want to clear the editor?')) {
+            editor.innerHTML = '';
+            sessionStorage.removeItem('rich_content');
+        }
+    }
+
+    function saveOptions() {
+        if(confirm('Click "OK" to download HTML backup, or "Cancel" to Print/Save as PDF.')) {
+            exportHTML();
+        } else {
+            window.print();
+        }
+    }
+
+    function insertLink() {
+        const url = prompt("Enter URL:");
+        if (url) format('createLink', url);
+    }
+
+    function insertImg() {
+        const url = prompt("Enter Image URL or Base64 code:");
+        if (url) format('insertImage', url);
+    }
+
+    function loadHTML(event) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            editor.innerHTML = e.target.result;
+            sessionStorage.setItem('rich_content', editor.innerHTML);
+        };
+        reader.readAsText(file);
+    }
+
+    document.querySelectorAll('input[type="color"]').forEach(picker => {
+        picker.addEventListener('input', (e) => {
+            e.target.nextElementSibling.style.backgroundColor = e.target.value;
+        });
+    });
+
+    function exportHTML() {
+        const blob = new Blob([editor.innerHTML], { type: 'text/html' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'document.html';
+        a.click();
+    }
+</script>
+</body>
+</html>
