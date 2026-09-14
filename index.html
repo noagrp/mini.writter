@@ -1,209 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini Writter</title>
-    <style>
-        body { background: #f0f0f0; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 10px; margin: 0; }
-        
-        /* Top Header */
-        #header { width: 100%; max-width: 1050px; display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 5px; font-weight: bold; }
-        #header span { cursor: pointer; color: #2c3e50; }
-
-        /* Toolbar */
-        #toolbar { 
-            background: #2c3e50; padding: 8px; display: flex; flex-wrap: wrap; gap: 5px; 
-            justify-content: center; 
-            border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 1050px; box-sizing: border-box;
-        }
-        .tool-group { display: flex; gap: 4px; border-right: 1px solid #7f8c8d; padding-right: 5px; }
-        
-        button, select, .color-picker-label { 
-            height: 35px; padding: 0 8px; cursor: pointer; border: none; 
-            border-radius: 4px; background: #ecf0f1; font-weight: bold; font-size: 12px;
-            display: flex; align-items: center; justify-content: center;
-        }
-        
-        .color-picker-label { width: 35px; padding: 0; position: relative; }
-        .color-picker-label input { position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
-        .color-circle { width: 18px; height: 18px; border-radius: 50%; border: 1px solid #000; }
-
-        #editor { 
-            width: 100%; max-width: 1050px; min-height: 500px; background: white; 
-            margin-top: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            outline: none; font-size: 11pt; box-sizing: border-box;
-        }
-
-        @media (max-width: 600px) {
-            #toolbar { justify-content: center; }
-            .tool-group { border-right: none; }
-        }
-        
-        @media print {
-            #header, #toolbar, .disclaimer { display: none; }
-            #editor { box-shadow: none; padding: 0; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#263746">
+<title>Mini Writter</title>
+<link rel="manifest" href="./manifest.webmanifest?v=1">
+<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png?v=1">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png?v=1">
+<style>
+:root{--bg:#eef1f4;--bar:#263746;--bar2:#34495e;--paper:#fff;--text:#1f2937;--muted:#6b7280;--border:#d7dde3;--accent:#2563eb;--danger:#b42318}*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}button,input,select{font:inherit}.app{min-height:100vh}.top{position:sticky;top:0;z-index:30;background:rgba(238,241,244,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:8px 10px}.top-inner{max-width:1080px;margin:auto}.docbar{display:flex;align-items:center;gap:8px;margin-bottom:7px}.title{flex:1;min-width:0;border:1px solid var(--border);background:#fff;border-radius:7px;padding:8px 10px;font-weight:700}.doc-actions{display:flex;gap:6px;flex-wrap:wrap}.btn,.tool,select{border:0;border-radius:6px;background:#eef2f6;color:#18212b;min-height:34px;padding:0 9px;font-size:12px;font-weight:700;cursor:pointer}.btn.primary{background:var(--accent);color:#fff}.btn.danger{background:#fee4e2;color:var(--danger)}.toolbar{background:var(--bar);border-radius:9px;padding:7px;display:flex;gap:5px;align-items:center;overflow-x:auto;scrollbar-width:thin}.toolbar::-webkit-scrollbar{height:4px}.group{display:flex;gap:4px;padding-right:5px;border-right:1px solid #667585;flex:0 0 auto}.group:last-child{border-right:0}.tool{min-width:34px;padding:0 8px}.tool.active{background:#bfdbfe;color:#1d4ed8}.toolbar select{max-width:140px}.color-label{position:relative;width:34px;height:34px;background:#eef2f6;border-radius:6px;display:grid;place-items:center;cursor:pointer}.color-label input{position:absolute;inset:0;opacity:0;cursor:pointer}.swatch{width:17px;height:17px;border-radius:50%;border:1px solid #111}.more-wrap{display:none;background:var(--bar2);border-radius:0 0 9px 9px;padding:7px;margin-top:-2px;gap:5px;flex-wrap:wrap}.more-wrap.open{display:flex}.more-wrap .group{border-right-color:#718096}.paper-wrap{max-width:1080px;margin:12px auto;padding:0 10px 30px}.statusbar{display:flex;justify-content:space-between;gap:10px;align-items:center;color:var(--muted);font-size:11px;margin:0 2px 7px}.status-left,.status-right{display:flex;gap:10px;flex-wrap:wrap}.editor{width:100%;min-height:70vh;background:var(--paper);padding:34px 42px;box-shadow:0 3px 18px rgba(15,23,42,.1);outline:none;border-radius:4px;font-family:Arial,sans-serif;font-size:16px;line-height:1.5;overflow-wrap:anywhere}.editor:empty:before{content:attr(data-placeholder);color:#9ca3af}.editor img{max-width:100%;height:auto}.editor table{border-collapse:collapse;max-width:100%}.editor td,.editor th{border:1px solid #9ca3af;padding:6px 8px}.editor blockquote{border-left:4px solid #94a3b8;margin-left:0;padding-left:14px;color:#475569}.page-break{border-top:2px dashed #94a3b8;margin:28px 0;height:0}.toast{position:fixed;right:14px;bottom:14px;background:#111827;color:#fff;border-radius:8px;padding:9px 12px;font-size:12px;opacity:0;transform:translateY(8px);pointer-events:none;transition:.2s;z-index:50}.toast.show{opacity:1;transform:none}.hidden{display:none!important}@media(max-width:700px){.top{padding:7px}.docbar{align-items:stretch}.title{font-size:14px}.doc-actions .hide-mobile{display:none}.toolbar{border-radius:8px}.more-wrap{border-radius:0 0 8px 8px}.paper-wrap{margin-top:8px;padding:0 7px 20px}.editor{min-height:calc(100vh - 210px);padding:22px 18px;font-size:16px}.statusbar{padding:0 2px}.toolbar select{max-width:115px}.tool,.btn,select{min-height:38px}.color-label{width:38px;height:38px}}@media print{body{background:#fff}.top,.statusbar,.toast{display:none!important}.paper-wrap{max-width:none;margin:0;padding:0}.editor{box-shadow:none;border:0;padding:0;min-height:0}.page-break{border:0;break-after:page;height:0;margin:0}}
+</style>
 </head>
 <body>
-
-<div id="header">
-    <span onclick="clearEditor()">Clear</span> | 
-    <span onclick="saveOptions()">Save</span> | 
-    <span onclick="document.getElementById('filePicker').click()">Load</span>
-    <input type="file" id="filePicker" style="display:none" onchange="loadHTML(event)">
+<div class="app">
+<header class="top">
+<div class="top-inner">
+<div class="docbar">
+<input id="docTitle" class="title" value="Untitled" aria-label="Document title">
+<div class="doc-actions">
+<button class="btn" id="newBtn">New</button>
+<button class="btn hide-mobile" id="openBtn">Open</button>
+<button class="btn primary" id="saveBtn">Save</button>
+<button class="btn" id="printBtn">Print/PDF</button>
+<button class="btn" id="moreBtn">More</button>
 </div>
-
-<div id="toolbar">
-    <div class="tool-group">
-        <select onchange="format('fontName', this.value)" style="width: 140px;">
-            <optgroup label="Common">
-                <option value="Arial">Arial</option><option value="Arial Black">Arial Black</option>
-                <option value="Courier New">Courier New</option><option value="Georgia">Georgia</option>
-                <option value="Helvetica">Helvetica</option><option value="Impact">Impact</option>
-                <option value="Lucida Console">Lucida Console</option><option value="Palatino">Palatino</option>
-                <option value="Tahoma">Tahoma</option><option value="Times New Roman">Times New Roman</option>
-                <option value="Trebuchet MS">Trebuchet MS</option><option value="Verdana">Verdana</option>
-                <option value="Comic Sans MS">Comic Sans MS</option><option value="Garamond">Garamond</option>
-                <option value="Bookman">Bookman</option><option value="Candara">Candara</option>
-                <option value="Geneva">Geneva</option><option value="Segoe UI">Segoe UI</option>
-                <option value="Calibri">Calibri</option><option value="Cambria">Cambria</option>
-            </optgroup>
-            <optgroup label="Chinese">
-                <option value="SimSun">宋体</option><option value="NSimSun">新宋体</option>
-                <option value="SimHei">黑体</option><option value="Microsoft YaHei">微软雅黑</option>
-                <option value="Microsoft JhengHei">微軟正黑體</option><option value="KaiTi">楷体</option>
-                <option value="FangSong">仿宋</option><option value="LiSu">隶书</option>
-                <option value="YouYuan">幼圆</option><option value="STHeiti">华文黑体</option>
-                <option value="STSong">华文宋体</option><option value="STKaiti">华文楷体</option>
-                <option value="STFangsong">华文仿宋</option><option value="Hiragino Sans GB">冬青黑体</option>
-                <option value="PMingLiU">新细明体</option><option value="MingLiU">细明体</option>
-                <option value="DFKai-SB">标楷体</option><option value="SimKaiti">华文楷体</option>
-                <option value="FZSongti">方正宋体</option><option value="FZHeiti">方正黑体</option>
-            </optgroup>
-        </select>
-        <select onchange="format('fontSize', this.value)" style="width: 60px;">
-            <option value="1">7</option><option value="1">8</option><option value="1">9</option>
-            <option value="2">10</option><option value="3" selected>11</option>
-            <option value="3">12</option><option value="3">13</option><option value="4">14</option>
-            <option value="4">15</option><option value="4">16</option><option value="4">17</option>
-            <option value="5">18</option><option value="5">19</option><option value="5">20</option>
-            <option value="5">21</option><option value="5">22</option><option value="5">23</option>
-            <option value="6">24</option><option value="6">25</option><option value="6">26</option>
-            <option value="6">27</option><option value="6">28</option><option value="6">29</option>
-            <option value="6">30</option><option value="7">31</option><option value="7">32</option>
-            <option value="7">33</option><option value="7">34</option><option value="7">35</option>
-            <option value="7">36</option>
-        </select>
-    </div>
-    
-    <div class="tool-group">
-        <button onclick="format('undo')">↶</button>
-        <button onclick="format('redo')">↷</button>
-        <button onclick="format('bold')">B</button>
-        <button onclick="format('italic')">I</button>
-        <button onclick="format('underline')">U</button>
-        <button onclick="format('strikeThrough')">S</button>
-    </div>
-
-    <div class="tool-group">
-        <label class="color-picker-label" title="Text Color">
-            <input type="color" oninput="format('foreColor', this.value)">
-            <div class="color-circle" style="background: #000;"></div>
-        </label>
-        <label class="color-picker-label" title="Fill Color">
-            <input type="color" oninput="format('hiliteColor', this.value)">
-            <div class="color-circle" style="background: #ffff00;"></div>
-        </label>
-    </div>
-
-    <div class="tool-group">
-        <button onclick="format('indent')">➔</button>
-        <button onclick="format('outdent')">➔↺</button>
-        <button onclick="format('insertHorizontalRule')">HR</button>
-        <button onclick="format('subscript')">x₁</button>
-        <button onclick="format('superscript')">x²</button>
-        <button onclick="insertLink()">Link</button>
-        <button onclick="insertImg()">Img</button>
-    </div>
-
-    <div class="tool-group">
-        <button onclick="format('justifyLeft')">Left</button>
-        <button onclick="format('justifyCenter')">Center</button>
-        <button onclick="format('justifyRight')">Right</button>
-        <button onclick="format('justifyFull')">Justify</button>
-    </div>
 </div>
-
-<div class="disclaimer" style="width: 100%; max-width: 1050px; text-align: center; font-size: 12px; color: #666; margin-top: 10px; padding: 0 20px; box-sizing: border-box;">
-    <em>Note: This editor runs entirely in your browser. Data is saved temporarily in your session—please click <strong>Save</strong> to download your work before closing the tab.</em>
+<div class="toolbar" id="toolbar">
+<div class="group"><button class="tool" data-cmd="undo" title="Undo">↶</button><button class="tool" data-cmd="redo" title="Redo">↷</button></div>
+<div class="group"><select id="blockFormat" title="Paragraph style"><option value="p">Normal</option><option value="h1">H1</option><option value="h2">H2</option><option value="h3">H3</option><option value="blockquote">Quote</option></select><select id="fontName" title="Font"><option>Arial</option><option>Segoe UI</option><option>Calibri</option><option>Georgia</option><option>Times New Roman</option><option>Courier New</option><option>Verdana</option><option>Tahoma</option><option>Microsoft YaHei</option><option>Microsoft JhengHei</option><option>SimSun</option><option>KaiTi</option></select><select id="fontSize" title="Font size"><option>10</option><option>11</option><option>12</option><option>14</option><option selected>16</option><option>18</option><option>20</option><option>24</option><option>28</option><option>32</option><option>36</option><option>48</option><option>64</option></select></div>
+<div class="group"><button class="tool" data-cmd="bold"><b>B</b></button><button class="tool" data-cmd="italic"><i>I</i></button><button class="tool" data-cmd="underline"><u>U</u></button><button class="tool" data-cmd="strikeThrough"><s>S</s></button></div>
+<div class="group"><button class="tool" data-cmd="insertUnorderedList" title="Bullets">• List</button><button class="tool" data-cmd="insertOrderedList" title="Numbered list">1. List</button></div>
+<div class="group"><button class="tool" data-cmd="justifyLeft">L</button><button class="tool" data-cmd="justifyCenter">C</button><button class="tool" data-cmd="justifyRight">R</button><button class="tool" data-cmd="justifyFull">J</button></div>
 </div>
-
-<div id="editor" contenteditable="true"></div>
-
+<div class="more-wrap" id="moreTools">
+<div class="group"><label class="color-label" title="Text color"><input id="textColor" type="color" value="#000000"><span class="swatch" id="textSwatch" style="background:#000"></span></label><label class="color-label" title="Highlight"><input id="highlightColor" type="color" value="#ffff00"><span class="swatch" id="highlightSwatch" style="background:#ffff00"></span></label></div>
+<div class="group"><button class="tool" data-cmd="indent">Indent</button><button class="tool" data-cmd="outdent">Outdent</button><button class="tool" data-cmd="subscript">x₁</button><button class="tool" data-cmd="superscript">x²</button><button class="tool" id="clearFormatBtn">Clear Style</button></div>
+<div class="group"><select id="lineSpacing" title="Line spacing"><option value="1">1.0×</option><option value="1.15">1.15×</option><option value="1.5" selected>1.5×</option><option value="2">2.0×</option></select><button class="tool" id="upperBtn">ABC</button><button class="tool" id="lowerBtn">abc</button><button class="tool" id="capitalizeBtn">Aa</button></div>
+<div class="group"><button class="tool" id="linkBtn">Link</button><button class="tool" data-cmd="unlink">Unlink</button><button class="tool" id="imageBtn">Image</button><button class="tool" id="tableBtn">Table</button><button class="tool" id="checkBtn">☐ Check</button></div>
+<div class="group"><button class="tool" data-cmd="insertHorizontalRule">HR</button><button class="tool" id="pageBreakBtn">Page Break</button><button class="tool" id="dateBtn">Date/Time</button><button class="tool" id="findBtn">Find</button><button class="tool" id="replaceBtn">Replace</button></div>
+</div>
+</div>
+</header>
+<main class="paper-wrap">
+<div class="statusbar"><div class="status-left"><span id="saveState">Saved locally</span></div><div class="status-right"><span id="wordCount">0 words</span><span id="charCount">0 chars</span></div></div>
+<div id="editor" class="editor" contenteditable="true" spellcheck="true" data-placeholder="Start writing..."></div>
+</main>
+</div>
+<input id="filePicker" type="file" accept=".html,.htm,.txt,text/html,text/plain" hidden>
+<input id="imagePicker" type="file" accept="image/*" hidden>
+<div id="toast" class="toast"></div>
 <script>
-    const editor = document.getElementById('editor');
-    
-    editor.addEventListener('input', () => sessionStorage.setItem('rich_content', editor.innerHTML));
-    window.onload = () => {
-        editor.innerHTML = sessionStorage.getItem('rich_content') || '';
-        editor.style.fontSize = "11pt";
-    };
-
-    function format(cmd, val = null) {
-        editor.focus();
-        document.execCommand(cmd, false, val);
-    }
-
-    function clearEditor() {
-        if(confirm('Are you sure you want to clear the editor?')) {
-            editor.innerHTML = '';
-            sessionStorage.removeItem('rich_content');
-        }
-    }
-
-    function saveOptions() {
-        if(confirm('Click "OK" to download HTML backup, or "Cancel" to Print/Save as PDF.')) {
-            exportHTML();
-        } else {
-            window.print();
-        }
-    }
-
-    function insertLink() {
-        const url = prompt("Enter URL:");
-        if (url) format('createLink', url);
-    }
-
-    function insertImg() {
-        const url = prompt("Enter Image URL or Base64 code:");
-        if (url) format('insertImage', url);
-    }
-
-    function loadHTML(event) {
-        const file = event.target.files[0];
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            editor.innerHTML = e.target.result;
-            sessionStorage.setItem('rich_content', editor.innerHTML);
-        };
-        reader.readAsText(file);
-    }
-
-    document.querySelectorAll('input[type="color"]').forEach(picker => {
-        picker.addEventListener('input', (e) => {
-            e.target.nextElementSibling.style.backgroundColor = e.target.value;
-        });
-    });
-
-    function exportHTML() {
-        const blob = new Blob([editor.innerHTML], { type: 'text/html' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'document.html';
-        a.click();
-    }
+const $=id=>document.getElementById(id),editor=$('editor');
+const KEY='mini_writter_doc_v2';let saveTimer=null;
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),1400)}
+function fileName(ext){const base=($('docTitle').value.trim()||'document').replace(/[\\/:*?"<>|]+/g,'_').slice(0,80);return `${base}.${ext}`}
+function stats(){const text=(editor.innerText||'').trim();const words=text?text.split(/\s+/).filter(Boolean).length:0;$('wordCount').textContent=`${words} words`;$('charCount').textContent=`${(editor.innerText||'').length} chars`}
+function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify({v:2,title:$('docTitle').value,html:editor.innerHTML,updated:Date.now()}));$('saveState').textContent='Saved locally'}catch{$('saveState').textContent='Local save unavailable'}}
+function scheduleSave(){$('saveState').textContent='Saving…';clearTimeout(saveTimer);saveTimer=setTimeout(saveLocal,350);stats()}
+function loadLocal(){try{const d=JSON.parse(localStorage.getItem(KEY)||'null');if(d?.html!=null){editor.innerHTML=d.html;$('docTitle').value=d.title||'Untitled';return}const old=sessionStorage.getItem('rich_content');if(old){editor.innerHTML=old;saveLocal()}}catch{}}
+function focusExec(cmd,val=null){editor.focus();document.execCommand(cmd,false,val);scheduleSave()}
+function fontPx(px){editor.focus();document.execCommand('fontSize',false,'7');editor.querySelectorAll('font[size="7"]').forEach(n=>{n.removeAttribute('size');n.style.fontSize=px+'px'});scheduleSave()}
+function selectionBlock(){const s=getSelection();if(!s.rangeCount)return editor;let n=s.anchorNode;while(n&&n!==editor&&!(n.nodeType===1&&/^(P|DIV|H1|H2|H3|BLOCKQUOTE|LI)$/.test(n.tagName)))n=n.parentNode;return n&&n!==editor?n:editor}
+function setLineHeight(v){const s=getSelection();if(!s.rangeCount)return;let block=selectionBlock();if(block===editor){document.execCommand('formatBlock',false,'p');block=selectionBlock()}if(block&&block!==editor)block.style.lineHeight=v;scheduleSave()}
+function transformSelection(fn){const sel=getSelection();if(!sel.rangeCount||sel.isCollapsed)return;const r=sel.getRangeAt(0),txt=r.toString();r.deleteContents();r.insertNode(document.createTextNode(fn(txt)));sel.removeAllRanges();sel.addRange(r);scheduleSave()}
+function insertHtml(html){editor.focus();document.execCommand('insertHTML',false,html);scheduleSave()}
+function sanitizeHtml(html){const doc=new DOMParser().parseFromString(html,'text/html');doc.querySelectorAll('script,iframe,object,embed,link,meta').forEach(n=>n.remove());doc.querySelectorAll('*').forEach(el=>{[...el.attributes].forEach(a=>{const n=a.name.toLowerCase(),v=a.value.trim().toLowerCase();if(n.startsWith('on')||(n==='href'||n==='src')&&v.startsWith('javascript:'))el.removeAttribute(a.name)})});return doc.body.innerHTML}
+function download(text,type,name){const url=URL.createObjectURL(new Blob([text],{type})),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+document.querySelectorAll('[data-cmd]').forEach(b=>b.onclick=()=>focusExec(b.dataset.cmd));
+$('blockFormat').onchange=e=>focusExec('formatBlock',e.target.value);$('fontName').onchange=e=>focusExec('fontName',e.target.value);$('fontSize').onchange=e=>fontPx(+e.target.value);
+$('textColor').oninput=e=>{$('textSwatch').style.background=e.target.value;focusExec('foreColor',e.target.value)};$('highlightColor').oninput=e=>{$('highlightSwatch').style.background=e.target.value;focusExec('hiliteColor',e.target.value)};
+$('lineSpacing').onchange=e=>setLineHeight(e.target.value);$('clearFormatBtn').onclick=()=>{focusExec('removeFormat');focusExec('unlink')};
+$('upperBtn').onclick=()=>transformSelection(s=>s.toUpperCase());$('lowerBtn').onclick=()=>transformSelection(s=>s.toLowerCase());$('capitalizeBtn').onclick=()=>transformSelection(s=>s.replace(/\b\p{L}/gu,c=>c.toUpperCase()));
+$('linkBtn').onclick=()=>{const url=prompt('Enter URL:','https://');if(url)focusExec('createLink',url)};
+$('imageBtn').onclick=()=>$('imagePicker').click();$('imagePicker').onchange=e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>insertHtml(`<img src="${r.result}" alt="">`);r.readAsDataURL(f);e.target.value=''};
+$('tableBtn').onclick=()=>{const rows=Math.max(1,Math.min(20,+(prompt('Rows?','2')||0))),cols=Math.max(1,Math.min(10,+(prompt('Columns?','2')||0)));if(!rows||!cols)return;let h='<table><tbody>';for(let r=0;r<rows;r++){h+='<tr>';for(let c=0;c<cols;c++)h+='<td>&nbsp;</td>';h+='</tr>'}insertHtml(h+'</tbody></table><p></p>')};
+$('checkBtn').onclick=()=>insertHtml('<div>☐&nbsp;</div>');$('pageBreakBtn').onclick=()=>insertHtml('<div class="page-break"></div><p></p>');$('dateBtn').onclick=()=>insertHtml(new Date().toLocaleString());
+$('findBtn').onclick=()=>{const q=prompt('Find:');if(q)window.find(q,false,false,true)};
+function replaceText(root,find,repl){const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);const nodes=[];while(w.nextNode())nodes.push(w.currentNode);let count=0;nodes.forEach(n=>{if(!n.nodeValue.includes(find))return;count+=(n.nodeValue.split(find).length-1);n.nodeValue=n.nodeValue.split(find).join(repl)});return count}
+$('replaceBtn').onclick=()=>{const q=prompt('Find:');if(!q)return;const r=prompt('Replace with:','')??'';const n=replaceText(editor,q,r);scheduleSave();toast(`${n} replaced`)};
+$('moreBtn').onclick=()=>$('moreTools').classList.toggle('open');
+editor.addEventListener('input',scheduleSave);$('docTitle').addEventListener('input',scheduleSave);
+$('newBtn').onclick=()=>{if(!confirm('Start a new document?'))return;editor.innerHTML='';$('docTitle').value='Untitled';saveLocal();stats();editor.focus()};
+$('openBtn').onclick=()=>$('filePicker').click();$('filePicker').onchange=e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{editor.innerHTML=f.name.toLowerCase().endsWith('.txt')?String(r.result).split('\n').map(x=>`<div>${x.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]))||'<br>'}</div>`).join(''):sanitizeHtml(String(r.result));$('docTitle').value=f.name.replace(/\.[^.]+$/,'')||'Untitled';saveLocal();stats();toast('Loaded')};r.readAsText(f);e.target.value=''};
+$('saveBtn').onclick=()=>{const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${$('docTitle').value.replace(/[&<>]/g,'')}</title></head><body>${editor.innerHTML}</body></html>`;download(html,'text/html;charset=utf-8',fileName('html'));toast('HTML saved')};
+$('printBtn').onclick=()=>window.print();
+$('moreBtn').addEventListener('contextmenu',e=>{e.preventDefault();download(editor.innerText,'text/plain;charset=utf-8',fileName('txt'))});
+window.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();$('saveBtn').click()}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='f'){e.preventDefault();$('findBtn').click()}});
+loadLocal();stats();editor.style.lineHeight='1.5';if('serviceWorker'in navigator)navigator.serviceWorker.register('./service-worker.js?v=1').catch(()=>{});
 </script>
 </body>
 </html>
